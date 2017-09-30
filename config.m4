@@ -43,6 +43,7 @@ if test "$PHP_SPX" = "yes"; then
         src/php_spx.c            \
         src/spx_profiler.c       \
         src/spx_reporter_fp.c    \
+        src/spx_reporter_fg.c    \
         src/spx_reporter_trace.c \
         src/spx_reporter_cg.c    \
         src/spx_reporter_gte.c   \

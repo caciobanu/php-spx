@@ -20,6 +20,7 @@
 #include "spx_resource_stats.h"
 #include "spx_profiler.h"
 #include "spx_reporter_fp.h"
+#include "spx_reporter_fg.h"
 #include "spx_reporter_cg.h"
 #include "spx_reporter_gte.h"
 #include "spx_reporter_trace.h"
@@ -369,6 +370,11 @@ static void init(void)
 
             break;
 
+        case SPX_CONFIG_OUTPUT_FLAME_GRAPH:
+            reporter = spx_reporter_fg_create(output);
+
+            break;
+
         case SPX_CONFIG_OUTPUT_CALLGRIND:
             reporter = spx_reporter_cg_create(output);
 
@@ -480,6 +486,11 @@ static void finish(void)
 
             break;
 
+        case SPX_CONFIG_OUTPUT_FLAME_GRAPH:
+            spx_php_output_direct_print("Content-Type: image/svg+xml\r\n");
+
+            break;
+
         case SPX_CONFIG_OUTPUT_CALLGRIND:
             spx_php_output_direct_print("Content-Type: application/octet-stream\r\n");
 
@@ -492,7 +503,11 @@ static void finish(void)
     }
 
 
-    if (context.config.output != SPX_CONFIG_OUTPUT_FLAT_PROFILE) {
+    if (
+        /* FIXME refactor spx output management */
+        context.config.output != SPX_CONFIG_OUTPUT_FLAT_PROFILE
+        && context.config.output != SPX_CONFIG_OUTPUT_FLAME_GRAPH
+    ) {
         spx_php_output_direct_print("Content-Encoding: gzip\r\n");
         
         spx_php_output_direct_print("Content-Disposition: attachment; filename=\"");
@@ -543,6 +558,13 @@ static void generate_output_file_name(char * str, size_t max, spx_config_output_
         case SPX_CONFIG_OUTPUT_FLAT_PROFILE:
             prefix = "spx.flat_profile";
             extension = "txt";
+            compressed = 0;
+
+            break;
+
+        case SPX_CONFIG_OUTPUT_FLAME_GRAPH:
+            prefix = "spx.flame_graph";
+            extension = "svg";
             compressed = 0;
 
             break;

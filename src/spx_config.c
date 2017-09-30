@@ -145,6 +145,8 @@ static void source_data_to_config(const source_data_t * source_data, spx_config_
     if (source_data->output_str) {
         if (0 == strcmp(source_data->output_str, "fp")) {
             config->output = SPX_CONFIG_OUTPUT_FLAT_PROFILE;
+        } else if (0 == strcmp(source_data->output_str, "fg")) {
+            config->output = SPX_CONFIG_OUTPUT_FLAME_GRAPH;
         } else if (0 == strcmp(source_data->output_str, "cg")) {
             config->output = SPX_CONFIG_OUTPUT_CALLGRIND;
         } else if (0 == strcmp(source_data->output_str, "gte")) {
